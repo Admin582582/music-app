@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Music App</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>My Music</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <div class="app">
-    <aside class="sidebar">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
       <h1>🎵 My Music</h1>
       <p>Cloudflare R2 Player</p>
 
@@ -17,53 +19,48 @@
         <a href="#">Playlist</a>
         <a href="#">Yêu thích</a>
       </div>
-    </aside>
+    </div>
 
-    <main class="main">
+    <!-- Main -->
+    <div class="main">
       <div class="player-card">
-        <img
-          src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=1200&auto=format&fit=crop"
-          alt="album cover"
-        />
+        <img src="https://picsum.photos/400" />
         <h2>Bản Nhạc Buồn</h2>
-        <p>Nhạc của bạn từ Cloudflare R2</p>
+        <p>Nhạc của bạn</p>
 
         <div class="controls">
-          <button id="playBtn">Phát nhạc</button>
+          <button id="playBtn">▶ Play</button>
+
           <audio id="player" controls>
-            <source
-              src="https://pub-c0152066bdb542f18b3b3c9b5dc98409.r2.dev/B%E1%BA%A3n%20Nh%E1%BA%A1c%20Bu%E1%BB%93n%20%20Nh%E1%BA%A1c%20Tik%20Tok%20T%C3%A2m%20Tr%E1%BA%A1ng%20Kh%C3%B4ng%20L%E1%BB%9Di%20Piano.mp3"
-              type="audio/mpeg"
-            />
+            <source src="https://pub-c0152066bdb542f18b3b3c9b5dc98409.r2.dev/B%E1%BA%A3n%20Nh%E1%BA%A1c%20Bu%E1%BB%93n%20%20Nh%E1%BA%A1c%20Tik%20Tok%20T%C3%A2m%20Tr%E1%BA%A1ng%20Kh%C3%B4ng%20L%E1%BB%9Di%20Piano.mp3">
           </audio>
         </div>
       </div>
-    </main>
+    </div>
 
-    <aside class="playlist">
+    <!-- Playlist -->
+    <div class="playlist">
       <h3>Playlist</h3>
+
       <div class="song-item active">
         <strong>Bản Nhạc Buồn</strong>
         <span>Đang phát</span>
       </div>
+
       <div class="song-item">
-        <strong>Song 2</strong>
-        <span>Thêm sau</span>
+        <strong>Bài khác</strong>
+        <span>Chưa phát</span>
       </div>
-      <div class="song-item">
-        <strong>Song 3</strong>
-        <span>Thêm sau</span>
-      </div>
-    </aside>
+    </div>
+
   </div>
 
   <script>
-    const playBtn = document.getElementById("playBtn");
+    const btn = document.getElementById("playBtn");
     const player = document.getElementById("player");
 
-    playBtn.addEventListener("click", () => {
-      player.play();
-    });
+    btn.onclick = () => player.play();
   </script>
+
 </body>
 </html>
