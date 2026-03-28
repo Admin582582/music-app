@@ -1,66 +1,197 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>My Music</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lvmino Music - Chill Station</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top left, #2b2d42, #1a1a2e);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-center: center;
+            overflow: hidden;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Hiệu ứng đĩa quay */
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cd-thumb {
+            transition: all 0.5s ease;
+            border: 8px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .playing .cd-thumb {
+            animation: rotate 10s linear infinite;
+            border-radius: 50%;
+        }
+
+        /* Custom thanh trượt */
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #6366f1;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
+        }
+    </style>
 </head>
+<body class="flex items-center justify-center">
 
-<body>
-  <div class="app">
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <h1>🎵 My Music</h1>
-      <p>Cloudflare R2 Player</p>
-
-      <div class="menu">
-        <a href="#">Trang chủ</a>
-        <a href="#">Playlist</a>
-        <a href="#">Yêu thích</a>
-      </div>
-    </div>
-
-    <!-- Main -->
-    <div class="main">
-      <div class="player-card">
-        <img src="https://picsum.photos/400" />
-        <h2>Bản Nhạc Buồn</h2>
-        <p>Nhạc của bạn</p>
-
-        <div class="controls">
-          <button id="playBtn">▶ Play</button>
-
-          <audio id="player" controls>
-            <source src="https://pub-c0152066bdb542f18b3b3c9b5dc98409.r2.dev/B%E1%BA%A3n%20Nh%E1%BA%A1c%20Bu%E1%BB%93n%20%20Nh%E1%BA%A1c%20Tik%20Tok%20T%C3%A2m%20Tr%E1%BA%A1ng%20Kh%C3%B4ng%20L%E1%BB%9Di%20Piano.mp3">
-          </audio>
+    <div id="player-container" class="glass-card w-80 p-8 text-center transition-all duration-500">
+        <div class="relative flex justify-center">
+            <div class="cd-thumb-wrapper">
+                <img id="cover" src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=500" 
+                     class="cd-thumb w-56 h-56 object-cover rounded-2xl shadow-2xl">
+            </div>
         </div>
-      </div>
+
+        <div class="mt-8">
+            <h2 id="title" class="text-white text-xl font-semibold truncate uppercase tracking-wider">Loading...</h2>
+            <p id="artist" class="text-indigo-300 text-sm mt-1">Nghệ sĩ</p>
+        </div>
+
+        <div class="mt-8">
+            <input type="range" id="progress" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" value="0" step="1" min="0" max="100">
+            <div class="flex justify-between text-[10px] text-gray-400 mt-2 font-mono">
+                <span id="current-time">00:00</span>
+                <span id="duration">00:00</span>
+            </div>
+        </div>
+
+        <div class="mt-8 flex items-center justify-between text-gray-300">
+            <button id="repeat" class="hover:text-indigo-400 transition"><i class="fas fa-redo-alt"></i></button>
+            <button id="prev" class="text-xl hover:text-white transition"><i class="fas fa-backward-step"></i></button>
+            
+            <button id="play-btn" class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl shadow-lg hover:scale-105 hover:bg-indigo-500 transition-all">
+                <i id="play-icon" class="fas fa-play ml-1"></i>
+            </button>
+            
+            <button id="next" class="text-xl hover:text-white transition"><i class="fas fa-forward-step"></i></button>
+            <button id="random" class="hover:text-indigo-400 transition"><i class="fas fa-random"></i></button>
+        </div>
     </div>
 
-    <!-- Playlist -->
-    <div class="playlist">
-      <h3>Playlist</h3>
+    <audio id="audio" src=""></audio>
 
-      <div class="song-item active">
-        <strong>Bản Nhạc Buồn</strong>
-        <span>Đang phát</span>
-      </div>
+    <script>
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('play-btn');
+        const playIcon = document.getElementById('play-icon');
+        const progress = document.getElementById('progress');
+        const title = document.getElementById('title');
+        const artist = document.getElementById('artist');
+        const cover = document.getElementById('cover');
+        const playerContainer = document.getElementById('player-container');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
 
-      <div class="song-item">
-        <strong>Bài khác</strong>
-        <span>Chưa phát</span>
-      </div>
-    </div>
+        // Danh sách bài hát (Thay link .mp3 thật vào đây để nghe)
+        const songs = [
+            { 
+                name: 'Chilling in Hanoi', 
+                artist: 'Lvmino Indie', 
+                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', 
+                cover: 'https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=500' 
+            },
+            { 
+                name: 'Saigon Nights', 
+                artist: 'Phu Quoc Vibes', 
+                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', 
+                cover: 'https://images.unsplash.com/photo-1459749411177-042180ce673c?w=500' 
+            }
+        ];
 
-  </div>
+        let songIndex = 0;
+        let isPlaying = false;
 
-  <script>
-    const btn = document.getElementById("playBtn");
-    const player = document.getElementById("player");
+        function loadSong(song) {
+            title.innerText = song.name;
+            artist.innerText = song.artist;
+            audio.src = song.src;
+            cover.src = song.cover;
+        }
 
-    btn.onclick = () => player.play();
-  </script>
+        function playSong() {
+            isPlaying = true;
+            playerContainer.classList.add('playing');
+            playIcon.classList.replace('fa-play', 'fa-pause');
+            audio.play();
+        }
 
+        function pauseSong() {
+            isPlaying = false;
+            playerContainer.classList.remove('playing');
+            playIcon.classList.replace('fa-pause', 'fa-play');
+            audio.pause();
+        }
+
+        playBtn.addEventListener('click', () => (isPlaying ? pauseSong() : playSong()));
+
+        // Chuyển bài
+        document.getElementById('next').addEventListener('click', () => {
+            songIndex = (songIndex + 1) % songs.length;
+            loadSong(songs[songIndex]);
+            playSong();
+        });
+
+        document.getElementById('prev').addEventListener('click', () => {
+            songIndex = (songIndex - 1 + songs.length) % songs.length;
+            loadSong(songs[songIndex]);
+            playSong();
+        });
+
+        // Cập nhật thanh tiến trình
+        audio.addEventListener('timeupdate', (e) => {
+            const { duration, currentTime } = e.srcElement;
+            const progressPercent = (currentTime / duration) * 100;
+            progress.value = progressPercent;
+
+            // Tính toán thời gian hiển thị
+            let curMins = Math.floor(currentTime / 60);
+            let curSecs = Math.floor(currentTime % 60);
+            if (curSecs < 10) curSecs = `0${curSecs}`;
+            currentTimeEl.innerText = `${curMins}:${curSecs}`;
+
+            if (duration) {
+                let durMins = Math.floor(duration / 60);
+                let durSecs = Math.floor(duration % 60);
+                if (durSecs < 10) durSecs = `0${durSecs}`;
+                durationEl.innerText = `${durMins}:${durSecs}`;
+            }
+        });
+
+        // Tua nhạc
+        progress.addEventListener('input', () => {
+            const time = (progress.value / 100) * audio.duration;
+            audio.currentTime = time;
+        });
+
+        // Tự chuyển bài khi hết
+        audio.addEventListener('ended', () => document.getElementById('next').click());
+
+        // Khởi tạo
+        loadSong(songs[songIndex]);
+    </script>
 </body>
 </html>
