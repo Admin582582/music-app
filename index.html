@@ -3,195 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lvmino Music - Chill Station</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Lvmino Music Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-        
+        /* CSS CỦA BẠN ĐÃ ĐƯỢC TỐI ƯU THÊM MỘT CHÚT */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top left, #2b2d42, #1a1a2e);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #111111, #1a1033);
+            color: white;
+            overflow: hidden; /* Giữ layout cố định */
+        }
+
+        .app {
+            display: grid;
+            grid-template-columns: 240px 1fr 350px;
             height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: rgba(255, 255, 255, 0.02);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            padding: 30px 24px;
+        }
+
+        .sidebar h1 { font-size: 24px; margin-bottom: 8px; letter-spacing: 1px; color: #8b5cf6; }
+        .sidebar p { color: #8b8b8b; margin-bottom: 32px; font-size: 14px; }
+
+        .menu { display: flex; flex-direction: column; gap: 8px; }
+        .menu a {
+            color: #d1d1d1;
+            text-decoration: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            transition: 0.3s;
             display: flex;
             align-items: center;
-            justify-center: center;
-            overflow: hidden;
+            gap: 12px;
+        }
+        .menu a:hover, .menu a.active {
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        /* MAIN PLAYER */
+        .main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background: radial-gradient(circle at center, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
         }
 
-        /* Hiệu ứng đĩa quay */
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .player-card { text-align: center; width: 100%; max-width: 420px; }
+        .player-card img {
+            width: 320px;
+            height: 320px;
+            object-fit: cover;
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .playing img { transform: scale(1.05); border: 2px solid rgba(139, 92, 246, 0.3); }
+
+        .player-card h2 { font-size: 32px; margin-bottom: 8px; font-weight: 700; }
+        .player-card p { color: #b3b3b3; margin-bottom: 25px; font-size: 18px; }
+
+        .controls { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 20px; }
+        
+        .btn-circle {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: #8b5cf6; color: white; border: none;
+            cursor: pointer; font-size: 20px; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-circle:hover { transform: scale(1.1); background: #7c3aed; }
+        
+        .btn-ghost {
+            background: transparent; color: #b3b3b3; font-size: 22px;
+            cursor: pointer; border: none; transition: 0.2s;
+        }
+        .btn-ghost:hover { color: white; }
+
+        /* PLAYLIST */
+        .playlist {
+            border-left: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 30px 24px;
+            overflow-y: auto;
         }
 
-        .cd-thumb {
-            transition: all 0.5s ease;
-            border: 8px solid rgba(255, 255, 255, 0.05);
-        }
+        .playlist h3 { margin-bottom: 20px; font-size: 20px; font-weight: 600; }
 
-        .playing .cd-thumb {
-            animation: rotate 10s linear infinite;
-            border-radius: 50%;
-        }
-
-        /* Custom thanh trượt */
-        input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            background: #6366f1;
-            border-radius: 50%;
+        .song-item {
+            padding: 12px 16px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.03);
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
+            transition: 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .song-item:hover { background: rgba(255,255,255,0.08); }
+        .song-item.active {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .song-item strong { display: block; font-size: 15px; color: #efefef; }
+        .song-item span { color: #8b8b8b; font-size: 13px; }
+
+        /* Seekbar */
+        .progress-container { width: 100%; margin-top: 10px; }
+        input[type="range"] {
+            width: 100%; accent-color: #8b5cf6; cursor: pointer; height: 4px;
         }
     </style>
 </head>
-<body class="flex items-center justify-center">
+<body>
 
-    <div id="player-container" class="glass-card w-80 p-8 text-center transition-all duration-500">
-        <div class="relative flex justify-center">
-            <div class="cd-thumb-wrapper">
-                <img id="cover" src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=500" 
-                     class="cd-thumb w-56 h-56 object-cover rounded-2xl shadow-2xl">
+<div class="app">
+    <aside class="sidebar">
+        <h1>LVMINO</h1>
+        <p>Indie Music Hub</p>
+        <nav class="menu">
+            <a href="#" class="active"><i class="fas fa-home"></i> Khám phá</a>
+            <a href="#"><i class="fas fa-compact-disc"></i> Album</a>
+            <a href="#"><i class="fas fa-heart"></i> Yêu thích</a>
+            <a href="#"><i class="fas fa-gear"></i> Cài đặt</a>
+        </nav>
+    </aside>
+
+    <main class="main" id="main-player">
+        <div class="player-card">
+            <img id="cover" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=500" alt="Cover">
+            <h2 id="title">Tên bài hát</h2>
+            <p id="artist">Nghệ sĩ</p>
+            
+            <div class="progress-container">
+                <input type="range" id="progress" value="0">
+            </div>
+
+            <div class="controls">
+                <button class="btn-ghost" id="prev"><i class="fas fa-backward-step"></i></button>
+                <button class="btn-circle" id="play-btn">
+                    <i id="play-icon" class="fas fa-play"></i>
+                </button>
+                <button class="btn-ghost" id="next"><i class="fas fa-forward-step"></i></button>
             </div>
         </div>
+    </main>
 
-        <div class="mt-8">
-            <h2 id="title" class="text-white text-xl font-semibold truncate uppercase tracking-wider">Loading...</h2>
-            <p id="artist" class="text-indigo-300 text-sm mt-1">Nghệ sĩ</p>
-        </div>
-
-        <div class="mt-8">
-            <input type="range" id="progress" class="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer" value="0" step="1" min="0" max="100">
-            <div class="flex justify-between text-[10px] text-gray-400 mt-2 font-mono">
-                <span id="current-time">00:00</span>
-                <span id="duration">00:00</span>
+    <section class="playlist">
+        <h3>Danh sách phát</h3>
+        <div id="playlist-list">
             </div>
-        </div>
+    </section>
+</div>
 
-        <div class="mt-8 flex items-center justify-between text-gray-300">
-            <button id="repeat" class="hover:text-indigo-400 transition"><i class="fas fa-redo-alt"></i></button>
-            <button id="prev" class="text-xl hover:text-white transition"><i class="fas fa-backward-step"></i></button>
-            
-            <button id="play-btn" class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl shadow-lg hover:scale-105 hover:bg-indigo-500 transition-all">
-                <i id="play-icon" class="fas fa-play ml-1"></i>
-            </button>
-            
-            <button id="next" class="text-xl hover:text-white transition"><i class="fas fa-forward-step"></i></button>
-            <button id="random" class="hover:text-indigo-400 transition"><i class="fas fa-random"></i></button>
-        </div>
-    </div>
+<audio id="audio"></audio>
 
-    <audio id="audio" src=""></audio>
+<script>
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play-btn');
+    const playIcon = document.getElementById('play-icon');
+    const progress = document.getElementById('progress');
+    const title = document.getElementById('title');
+    const artist = document.getElementById('artist');
+    const cover = document.getElementById('cover');
+    const mainPlayer = document.getElementById('main-player');
+    const playlistContainer = document.getElementById('playlist-list');
 
-    <script>
-        const audio = document.getElementById('audio');
-        const playBtn = document.getElementById('play-btn');
-        const playIcon = document.getElementById('play-icon');
-        const progress = document.getElementById('progress');
-        const title = document.getElementById('title');
-        const artist = document.getElementById('artist');
-        const cover = document.getElementById('cover');
-        const playerContainer = document.getElementById('player-container');
-        const currentTimeEl = document.getElementById('current-time');
-        const durationEl = document.getElementById('duration');
+    const songs = [
+        { name: 'Ghé Qua', artist: 'Dick x PC x Tofu', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', cover: 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?w=500' },
+        { name: 'Lạ Lùng', artist: 'Vũ', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500' },
+        { name: 'Bao Tiền Một Mớ Bình Yên', artist: '14 Casper', src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', cover: 'https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=500' }
+    ];
 
-        // Danh sách bài hát (Thay link .mp3 thật vào đây để nghe)
-        const songs = [
-            { 
-                name: 'Chilling in Hanoi', 
-                artist: 'Lvmino Indie', 
-                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', 
-                cover: 'https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=500' 
-            },
-            { 
-                name: 'Saigon Nights', 
-                artist: 'Phu Quoc Vibes', 
-                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', 
-                cover: 'https://images.unsplash.com/photo-1459749411177-042180ce673c?w=500' 
-            }
-        ];
+    let songIndex = 0;
+    let isPlaying = false;
 
-        let songIndex = 0;
-        let isPlaying = false;
+    // Render Playlist
+    function renderPlaylist() {
+        playlistContainer.innerHTML = songs.map((song, index) => `
+            <div class="song-item ${index === songIndex ? 'active' : ''}" onclick="selectSong(${index})">
+                <div>
+                    <strong>${song.name}</strong>
+                    <span>${song.artist}</span>
+                </div>
+                <i class="fas ${index === songIndex && isPlaying ? 'fa-volume-high' : 'fa-play'}"></i>
+            </div>
+        `).join('');
+    }
 
-        function loadSong(song) {
-            title.innerText = song.name;
-            artist.innerText = song.artist;
-            audio.src = song.src;
-            cover.src = song.cover;
-        }
+    function loadSong(song) {
+        title.innerText = song.name;
+        artist.innerText = song.artist;
+        audio.src = song.src;
+        cover.src = song.cover;
+        renderPlaylist();
+    }
 
-        function playSong() {
-            isPlaying = true;
-            playerContainer.classList.add('playing');
-            playIcon.classList.replace('fa-play', 'fa-pause');
-            audio.play();
-        }
-
-        function pauseSong() {
-            isPlaying = false;
-            playerContainer.classList.remove('playing');
-            playIcon.classList.replace('fa-pause', 'fa-play');
+    function togglePlay() {
+        if (isPlaying) {
             audio.pause();
+            isPlaying = false;
+            playIcon.classList.replace('fa-pause', 'fa-play');
+            mainPlayer.classList.remove('playing');
+        } else {
+            audio.play();
+            isPlaying = true;
+            playIcon.classList.replace('fa-play', 'fa-pause');
+            mainPlayer.classList.add('playing');
         }
+        renderPlaylist();
+    }
 
-        playBtn.addEventListener('click', () => (isPlaying ? pauseSong() : playSong()));
-
-        // Chuyển bài
-        document.getElementById('next').addEventListener('click', () => {
-            songIndex = (songIndex + 1) % songs.length;
-            loadSong(songs[songIndex]);
-            playSong();
-        });
-
-        document.getElementById('prev').addEventListener('click', () => {
-            songIndex = (songIndex - 1 + songs.length) % songs.length;
-            loadSong(songs[songIndex]);
-            playSong();
-        });
-
-        // Cập nhật thanh tiến trình
-        audio.addEventListener('timeupdate', (e) => {
-            const { duration, currentTime } = e.srcElement;
-            const progressPercent = (currentTime / duration) * 100;
-            progress.value = progressPercent;
-
-            // Tính toán thời gian hiển thị
-            let curMins = Math.floor(currentTime / 60);
-            let curSecs = Math.floor(currentTime % 60);
-            if (curSecs < 10) curSecs = `0${curSecs}`;
-            currentTimeEl.innerText = `${curMins}:${curSecs}`;
-
-            if (duration) {
-                let durMins = Math.floor(duration / 60);
-                let durSecs = Math.floor(duration % 60);
-                if (durSecs < 10) durSecs = `0${durSecs}`;
-                durationEl.innerText = `${durMins}:${durSecs}`;
-            }
-        });
-
-        // Tua nhạc
-        progress.addEventListener('input', () => {
-            const time = (progress.value / 100) * audio.duration;
-            audio.currentTime = time;
-        });
-
-        // Tự chuyển bài khi hết
-        audio.addEventListener('ended', () => document.getElementById('next').click());
-
-        // Khởi tạo
+    function selectSong(index) {
+        songIndex = index;
         loadSong(songs[songIndex]);
-    </script>
+        togglePlay();
+        if(!isPlaying) togglePlay(); // Force play
+    }
+
+    playBtn.addEventListener('click', togglePlay);
+
+    document.getElementById('next').addEventListener('click', () => {
+        songIndex = (songIndex + 1) % songs.length;
+        loadSong(songs[songIndex]);
+        if(isPlaying) audio.play();
+    });
+
+    document.getElementById('prev').addEventListener('click', () => {
+        songIndex = (songIndex - 1 + songs.length) % songs.length;
+        loadSong(songs[songIndex]);
+        if(isPlaying) audio.play();
+    });
+
+    audio.ontimeupdate = () => {
+        const pct = (audio.currentTime / audio.duration) * 100;
+        progress.value = pct || 0;
+    };
+
+    progress.oninput = () => {
+        audio.currentTime = (progress.value / 100) * audio.duration;
+    };
+
+    // Khởi tạo bài đầu
+    loadSong(songs[songIndex]);
+</script>
+
 </body>
 </html>
