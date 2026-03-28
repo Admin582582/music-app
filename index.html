@@ -11,28 +11,50 @@
     <aside class="sidebar">
       <h1>🎵 My Music</h1>
       <p>Cloudflare R2 Player</p>
+
+      <div class="menu">
+        <a href="#">Trang chủ</a>
+        <a href="#">Playlist</a>
+        <a href="#">Yêu thích</a>
+      </div>
     </aside>
 
     <main class="main">
-      <div class="song-card">
+      <div class="player-card">
         <img
           src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=1200&auto=format&fit=crop"
           alt="album cover"
         />
         <h2>Bản Nhạc Buồn</h2>
         <p>Nhạc của bạn từ Cloudflare R2</p>
-      </div>
 
-      <div class="controls">
-        <button id="playBtn">Phát nhạc</button>
-        <audio id="player" controls>
-          <source
-            src="https://pub-c0152066bdb542f18b3b3c9b5dc98409.r2.dev/B%E1%BA%A3n%20Nh%E1%BA%A1c%20Bu%E1%BB%93n%20%20Nh%E1%BA%A1c%20Tik%20Tok%20T%C3%A2m%20Tr%E1%BA%A1ng%20Kh%C3%B4ng%20L%E1%BB%9Di%20Piano.mp3"
-            type="audio/mpeg"
-          />
-        </audio>
+        <div class="controls">
+          <button id="playBtn">Phát nhạc</button>
+          <audio id="player" controls>
+            <source
+              src="https://pub-c0152066bdb542f18b3b3c9b5dc98409.r2.dev/B%E1%BA%A3n%20Nh%E1%BA%A1c%20Bu%E1%BB%93n%20%20Nh%E1%BA%A1c%20Tik%20Tok%20T%C3%A2m%20Tr%E1%BA%A1ng%20Kh%C3%B4ng%20L%E1%BB%9Di%20Piano.mp3"
+              type="audio/mpeg"
+            />
+          </audio>
+        </div>
       </div>
     </main>
+
+    <aside class="playlist">
+      <h3>Playlist</h3>
+      <div class="song-item active">
+        <strong>Bản Nhạc Buồn</strong>
+        <span>Đang phát</span>
+      </div>
+      <div class="song-item">
+        <strong>Song 2</strong>
+        <span>Thêm sau</span>
+      </div>
+      <div class="song-item">
+        <strong>Song 3</strong>
+        <span>Thêm sau</span>
+      </div>
+    </aside>
   </div>
 
   <script>
